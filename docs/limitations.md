@@ -49,8 +49,7 @@
   the client on the same machine as the server. They compare modes; they are not
   capacity numbers.
 * Throughput was not measured.
-* The GitHub Actions workflow and the Linux/Docker build are defined but have not been run
-  for this release.
+* Linux has been built and tested only inside the CI Docker job, not on a local machine.
 * `vcpkg.json` has no `builtin-baseline`, so CI resolves Boost and nlohmann-json from the
   vcpkg revision it clones. The local build used Boost 1.92.0.
 * Sanitizer options exist in CMake (`BATCHFLOW_ENABLE_ASAN/UBSAN/TSAN`), but no sanitizer

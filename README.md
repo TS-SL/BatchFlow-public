@@ -66,7 +66,7 @@ decisions. [docs/api-contract.md](docs/api-contract.md) gives every status code 
 
 The supported build is Windows x64 with Visual Studio 2022 (MSVC), CMake and Ninja.
 Dependencies are Boost.Asio/Beast and nlohmann-json from vcpkg, plus ONNX Runtime 1.32.0
-(CPU) from the official NuGet package. A Linux build is defined in the `Dockerfile`; see
+(CPU) from the official NuGet package. A Linux build is defined in the `Dockerfile` and runs in CI; see
 [What has been verified](#what-has-been-verified).
 
 From a "Developer PowerShell for VS 2022" prompt in the repository root:
@@ -109,9 +109,10 @@ the server refuses to start.
 
 ## Results: batching on this model makes tail latency worse
 
-Measured on this release (Windows 11, 12 logical CPUs, MSVC Release build, ONNX Runtime
-1.32.0 CPU, one worker, ORT intra/inter-op threads = 1). The load generator ran on the
-same machine. Each run used a fresh server and 8 closed-loop client threads sending 200
+Measured locally on Windows 11 (12 logical CPUs, MSVC Release build, ONNX Runtime 1.32.0
+CPU, one worker, ORT intra/inter-op threads = 1) from the source of commit `932c792`.
+Later commits changed only the Linux ONNX Runtime fetch script, one test and the docs.
+The load generator ran on the same machine. Each run used a fresh server and 8 closed-loop client threads sending 200
 identical `[1,3,8,8]` requests after 20 unrecorded warmups, with 3 runs per mode. Latency
 is client-observed: it includes a new TCP connection per request, JSON handling, queueing
 and inference. Only successful requests are counted, and all 1,200 succeeded.
@@ -142,8 +143,8 @@ an earlier, smaller run (retained from a revision before this release's fixes) a
 | CTest (11: smoke, ORT parity, batch mapping, 8 lifecycle cases) | Pass |
 | Live HTTP: normal 8, overload 1, lifecycle 5 | 14 of 14 pass, 0 skipped |
 | Batching benchmark above | Run on this release; all requests succeeded |
-| GitHub Actions workflow (Windows + Docker jobs) | Configured; **not yet run on this release** |
-| Linux / Docker build | Defined in `Dockerfile`; **not built or run for this release** (no Docker on the build host) |
+| GitHub Actions, Windows job | Passed on commit `76e5eda` (CI run #3): build, Python checks, CTest, live HTTP 14/14 with 0 skipped |
+| GitHub Actions, Docker job (Ubuntu 24.04, GCC) | Passed on commit `76e5eda` (CI run #3): build, CTest, live HTTP (the runner fails the image build on any failure or skip), container health check |
 
 ## Limitations that affect interpretation
 

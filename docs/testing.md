@@ -90,6 +90,7 @@ nlohmann-json 3.12.0, Python 3.12.10.
 | Numerical reference | 6 passed |
 | CTest | 11 of 11 passed |
 | Live HTTP | normal 8/8, overload 1/1, lifecycle 5/5; 0 skipped |
+| GitHub Actions (commit `76e5eda`, run #3) | Windows job and Docker (Ubuntu 24.04, GCC) job both passed, including CTest and the live HTTP runner |
 
 The release was configured with the same options as the `default` preset, using Boost and
 nlohmann-json already installed by vcpkg (`CMAKE_PREFIX_PATH`) instead of the preset's

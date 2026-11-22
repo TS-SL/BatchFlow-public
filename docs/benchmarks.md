@@ -35,8 +35,9 @@ incomplete if any run failed.
 
 ## Results for this release
 
-Source: [results/batching-comparison/](../results/batching-comparison/), measured on this
-release (Windows 11, 12 logical CPUs, MSVC 19.44 Release, ONNX Runtime 1.32.0 CPU, Python
+Source: [results/batching-comparison/](../results/batching-comparison/). The manifest's
+`source_sha256` is the source of commit `932c792`; later commits changed only the Linux
+ONNX Runtime fetch script and one integration test. Measured locally (Windows 11, 12 logical CPUs, MSVC 19.44 Release, ONNX Runtime 1.32.0 CPU, Python
 3.12 client on the same machine). All 1,200 measured requests and all 120 warmups
 returned 200.
 
