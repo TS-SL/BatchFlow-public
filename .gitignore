@@ -1,0 +1,57 @@
+# Build
+/build/
+/build-scaffold/
+/out/
+/cmake-build-*/
+/.vs/
+/.vscode/
+*.obj
+*.pdb
+*.exe
+*.dll
+*.lib
+*.exp
+*.ilk
+
+# Dependencies / local tools
+/third_party/vcpkg/
+/third_party/downloads/
+/third_party/onnxruntime/
+/tools/vcpkg/
+/vcpkg_installed/
+/.venv/
+/venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+*.user
+*.suo
+CMakeUserPresets.json
+
+# Secrets / local overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Benchmark logs (keep CSV/JSON evidence committable)
+/results/raw/**/*.log
+/results/raw/**/*.err
+*.bin.tmp
+*.csv.tmp
+*.profraw
+*.profdata
+asan.log*
+tsan.log*
+ubsan.log*
+
+# Model caches (committed models live under models/ with provenance docs)
+/models/.cache/
+*.onnx.tmp

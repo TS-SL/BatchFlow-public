@@ -1,0 +1,11 @@
+{
+  "name": "batchflow",
+  "version-string": "0.1.0",
+  "description": "Bounded concurrent ONNX Runtime inference server",
+  "dependencies": [
+    "boost-asio",
+    "boost-beast",
+    "boost-system",
+    "nlohmann-json"
+  ]
+}

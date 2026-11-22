@@ -1,0 +1,38 @@
+{
+  "name": "tiny_deterministic",
+  "version": "1.0.0",
+  "path": "models/tiny_deterministic.onnx",
+  "source": "scripts/export_tiny_model.py (seeded weights, not trained)",
+  "license": "Generated artifact for BatchFlow; redistribute with repository",
+  "input": {
+    "name": "input",
+    "dtype": "float32",
+    "shape": [
+      "N",
+      3,
+      8,
+      8
+    ]
+  },
+  "output": {
+    "name": "output",
+    "dtype": "float32",
+    "shape": [
+      "N",
+      4
+    ]
+  },
+  "batch_dimension": 0,
+  "preprocessing": "none \u2014 raw float32 tensor",
+  "sha256": "c8235a76953ad0202d221f5b17a4ab1ca10ea2e87a0dedbc9d0a1330be3f362e",
+  "bytes": 3353,
+  "fixture": "models/tiny_deterministic_fixtures.npz",
+  "cpp_blob": "models/tiny_b1_io.bin",
+  "tolerance": {
+    "rtol": 1e-05,
+    "atol": 1e-06
+  },
+  "accuracy_claim": "none \u2014 infrastructure smoke model only",
+  "onnxruntime_python": "1.32.0",
+  "onnxruntime_cpp": "Microsoft.ML.OnnxRuntime 1.32.0 (NuGet, CPU)"
+}

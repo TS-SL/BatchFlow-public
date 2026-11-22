@@ -1,0 +1,47 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "MSVC x64 + Ninja + vcpkg",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/tools/vcpkg/scripts/buildsystems/vcpkg.cmake",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "BATCHFLOW_BUILD_TESTS": "ON",
+        "BATCHFLOW_REQUIRE_FULL_BUILD": "ON"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "dev-no-deps",
+      "displayName": "Core library and smoke test only (no ORT/Boost)",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build-scaffold",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BATCHFLOW_BUILD_TESTS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default",
+      "configurePreset": "default"
+    },
+    {
+      "name": "dev-no-deps",
+      "configurePreset": "dev-no-deps"
+    }
+  ]
+}

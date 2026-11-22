@@ -1,0 +1,15 @@
+.git
+.venv
+build
+build-scaffold
+tools/vcpkg
+vcpkg_installed
+third_party/downloads
+third_party/onnxruntime
+results/raw/**/*.log
+results/raw/**/*.err
+**/__pycache__
+.pytest_cache
+.vs
+.vscode
+*.user

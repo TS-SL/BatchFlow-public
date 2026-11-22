@@ -1,0 +1,94 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows-build-test:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ninja
+        run: choco install ninja -y --no-progress
+
+      - name: Bootstrap vcpkg
+        run: |
+          git clone --depth 1 https://github.com/microsoft/vcpkg.git tools/vcpkg
+          .\tools\vcpkg\bootstrap-vcpkg.bat -disableMetrics
+
+      - name: Fetch ONNX Runtime (CPU NuGet)
+        shell: pwsh
+        run: ./scripts/fetch_onnxruntime.ps1
+
+      - name: Python fixtures and reference checks
+        shell: pwsh
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\python.exe -m pip install --upgrade pip
+          .\.venv\Scripts\pip.exe install -r requirements-dev.txt
+          .\.venv\Scripts\python.exe scripts/export_tiny_model.py
+          .\.venv\Scripts\python.exe tests/fixtures/make_wrong_shape_model.py
+          .\.venv\Scripts\python.exe -m pytest tests/python -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      # The default preset sets BATCHFLOW_REQUIRE_FULL_BUILD=ON: configuration fails if
+      # ONNX Runtime or the HTTP dependencies are missing, so the server target must exist.
+      - name: Configure + build
+        shell: pwsh
+        run: |
+          cmake --preset default
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build --preset default
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: CTest
+        shell: pwsh
+        run: ctest --test-dir build -C Release --output-on-failure --no-tests=error
+
+      # Required live HTTP run: starts each server configuration itself, fails if a
+      # server cannot start or become ready, and fails on any skipped test.
+      - name: Live HTTP integration (normal, overload, lifecycle)
+        shell: pwsh
+        run: .\.venv\Scripts\python.exe tests/integration/run_live.py --server build/batchflow_server.exe
+
+  docker-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build container image (includes CTest and live HTTP tests)
+        run: docker build -t batchflow:ci .
+
+      - name: Smoke container health
+        run: |
+          docker run -d --name bf -p 127.0.0.1:8080:8080 batchflow:ci
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8080/ready; then
+              docker stop bf
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs bf || true
+          docker stop bf || true
+          exit 1

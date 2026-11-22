@@ -1,0 +1,113 @@
+{
+  "description": "BatchFlow batching comparison (client-observed HTTP latency)",
+  "revision": {
+    "commit": "not a git checkout",
+    "uncommitted_changes": null,
+    "source_sha256": "66e3587e8c0d47a8d40514f344d471161e0bb699b3cd42c9fed50a2af31f6769"
+  },
+  "workload": {
+    "endpoint": "POST /infer",
+    "input": "models/tiny_b1_io.bin x (float32 [1,3,8,8]), identical every request",
+    "deadline_ms": 5000,
+    "requests_per_run": 200,
+    "concurrency": 8,
+    "client_model": "closed loop: each client thread sends its next request when the previous one returns",
+    "warmup_requests_per_run": 20,
+    "warmup": "sequential, unrecorded, same server process",
+    "repeats": 3,
+    "measurement": "time.perf_counter around urllib urlopen; includes TCP connect (no keep-alive), JSON encode/decode, server queueing and inference"
+  },
+  "server_common_args": [
+    "--model",
+    "models/tiny_deterministic.onnx",
+    "--workers",
+    "1",
+    "--ort-intra-threads",
+    "1",
+    "--ort-inter-threads",
+    "1",
+    "--max-pending",
+    "128"
+  ],
+  "modes": {
+    "nobatch": [
+      "--no-batching"
+    ],
+    "batch8_w20": [
+      "--max-batch",
+      "8",
+      "--batch-wait-ms",
+      "20"
+    ]
+  },
+  "platform": {
+    "os": "Windows",
+    "os_release": "11",
+    "machine": "AMD64",
+    "logical_cpus": 12,
+    "python": "3.12.10",
+    "onnxruntime_python": "1.32.0"
+  },
+  "runs": [
+    {
+      "name": "nobatch_r1",
+      "mode": "nobatch",
+      "repeat": 1,
+      "csv": "nobatch_r1.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 1,
+      "server_exit": 0,
+      "elapsed_s": 1.81
+    },
+    {
+      "name": "batch8_w20_r1",
+      "mode": "batch8_w20",
+      "repeat": 1,
+      "csv": "batch8_w20_r1.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 4.78261,
+      "server_exit": 0,
+      "elapsed_s": 2.553
+    },
+    {
+      "name": "batch8_w20_r2",
+      "mode": "batch8_w20",
+      "repeat": 2,
+      "csv": "batch8_w20_r2.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 4.88889,
+      "server_exit": 0,
+      "elapsed_s": 2.505
+    },
+    {
+      "name": "nobatch_r2",
+      "mode": "nobatch",
+      "repeat": 2,
+      "csv": "nobatch_r2.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 1,
+      "server_exit": 0,
+      "elapsed_s": 1.796
+    },
+    {
+      "name": "nobatch_r3",
+      "mode": "nobatch",
+      "repeat": 3,
+      "csv": "nobatch_r3.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 1,
+      "server_exit": 0,
+      "elapsed_s": 1.868
+    },
+    {
+      "name": "batch8_w20_r3",
+      "mode": "batch8_w20",
+      "repeat": 3,
+      "csv": "batch8_w20_r3.csv",
+      "load_gen_exit": 0,
+      "server_mean_batch_size": 4.78261,
+      "server_exit": 0,
+      "elapsed_s": 2.535
+    }
+  ]
+}

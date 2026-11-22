@@ -1,0 +1,115 @@
+{
+  "requests_total": 220,
+  "requests_success": 220,
+  "requests_rejected": 0,
+  "requests_error": 0,
+  "requests_expired": 0,
+  "requests_cancelled": 0,
+  "batches_formed": 46,
+  "batch_size_sum": 220,
+  "jobs_skipped": 0,
+  "mean_batch_size": 4.78261,
+  "queue_depth": 0,
+  "active_workers": 1,
+  "latency_ms": {
+    "e2e": {
+      "count": 220,
+      "sum_us": 911000,
+      "mean_ms": 4.14091,
+      "buckets": [
+        174,
+        4,
+        0,
+        7,
+        7,
+        25,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bucket_edges_ms": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        "Inf"
+      ]
+    },
+    "queue_wait": {
+      "count": 220,
+      "sum_us": 974627,
+      "mean_ms": 4.43012,
+      "buckets": [
+        166,
+        10,
+        2,
+        7,
+        4,
+        26,
+        5,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bucket_edges_ms": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        "Inf"
+      ]
+    },
+    "inference": {
+      "count": 220,
+      "sum_us": 11111,
+      "mean_ms": 0.0505045,
+      "buckets": [
+        220,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "bucket_edges_ms": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        "Inf"
+      ]
+    }
+  }
+}
