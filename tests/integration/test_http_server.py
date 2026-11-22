@@ -8,6 +8,7 @@ from __future__ import annotations
 import concurrent.futures
 import json
 import struct
+import urllib.error
 from pathlib import Path
 
 import pytest
@@ -79,10 +80,15 @@ def test_oversized_body(base_url):
     try:
         code, _ = http(base_url, "POST", "/infer", huge, timeout=10.0)
         assert code == 413
-    except (ConnectionAbortedError, ConnectionResetError):
-        # The server may close the stream after rejecting the body; the request still
-        # did not succeed and was not buffered without bound.
+    except ConnectionError:
+        # The server closes the stream after rejecting the body. Depending on timing and
+        # platform the client sees reset/aborted (Windows) or a broken pipe while still
+        # sending (Linux). The request did not succeed and was not buffered without bound.
         pass
+    except urllib.error.URLError as ex:
+        # urllib wraps the same connection errors; anything else is a real failure.
+        if not isinstance(ex.reason, ConnectionError):
+            raise
 
 
 def test_concurrent_infer(base_url):
