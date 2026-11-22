@@ -26,6 +26,14 @@ if [[ ! -e "$DEST/lib/libonnxruntime.so" ]]; then
     ln -s "$(basename "$ver_so")" "$DEST/lib/libonnxruntime.so"
   fi
 fi
+# The NuGet package ships only libonnxruntime.so, but its SONAME is versioned
+# (libonnxruntime.so.1 for 1.32.0). Executables record the SONAME, so the dynamic
+# loader needs a file by that name next to the library.
+soname="$(objdump -p "$DEST/lib/libonnxruntime.so" 2>/dev/null | awk '/SONAME/ {print $2}')"
+soname="${soname:-libonnxruntime.so.1}"
+if [[ ! -e "$DEST/lib/$soname" ]]; then
+  ln -s libonnxruntime.so "$DEST/lib/$soname"
+fi
 cp -a "$DEST"/lib/libonnxruntime.so* "$DEST/bin/" 2>/dev/null || true
 cat > "$DEST/VERSION.txt" <<EOF
 name=Microsoft.ML.OnnxRuntime
